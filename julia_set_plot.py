@@ -112,7 +112,7 @@ def generate_images():
     os.system('mkdir -p output/animation_files')
 
     # Generate image files in parallel.
-    args_list = [(plot_num, c) for plot_num, c in plot_nums_c_vals.items()]
+    args_list = plot_nums_c_vals.items()
     pool = multiprocessing.Pool(processes=args.num_processes)
     pool.map(generate_julia_image, args_list)
 
