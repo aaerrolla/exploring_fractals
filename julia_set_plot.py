@@ -4,6 +4,7 @@ import time, argparse
 
 import numpy as np
 from matplotlib import pyplot as plt
+import PIL
 
 
 # Parse cli arguments.
@@ -40,52 +41,50 @@ def get_iterations(point):
 
 
 def get_julia_points():
-    """Define the points, and the number of iterations for each point."""
-    points, point_iterations = [], []
+    """Get the number of iterations for each point.
+    Returns a list of rows."""
+    point_iterations = []
     for a in np.linspace(-a_bound, a_bound, args.num_steps):
+        row = []
         for b in np.linspace(-b_bound, b_bound, args.num_steps):
             point = complex(a, b)
-            iterations = get_iterations(point)
-            points.append(point)
-            point_iterations.append(iterations)
+            num_iterations = get_iterations(point)
+            row.append(num_iterations / args.max_iterations)
 
-    return (points, point_iterations)
+        point_iterations.append(row)
+
+    return point_iterations
 
 
-def plot_julia_points(points, point_iterations):
-    # Plot set.
-    x_values = [p.real for p in points]
-    y_values = [p.imag for p in points]
+def generate_julia_image(point_iterations):
+    """Generate an image of the julia set."""
+    
+    colors = plt.cm.viridis(point_iterations)*255
+    colors = np.array(colors, dtype=np.uint8)
+    new_image = PIL.Image.fromarray(colors)
 
-    plt.style.use('classic')
-    fig, ax = plt.subplots(figsize=(14, 10))
-
-    ax.scatter(x_values, y_values, c=point_iterations, cmap=plt.cm.viridis,
-            edgecolors='none', s=4)
-    ax.get_xaxis().set_visible(False)
-    ax.get_yaxis().set_visible(False)
-
-    filename = f"output/julia_plot_mpl-{args.num_steps}-maxiter-{args.max_iterations}.png"
-    plt.savefig(filename)
+    filename = f"output/julia_plot_pil-{args.num_steps}-maxiter-{args.max_iterations}.png"
+    new_image.save(filename)
+    print(f"Wrote file: {filename}")
 
 
 if __name__ == '__main__':
     start = time.perf_counter()
 
-    points, point_iterations = get_julia_points()
+    point_iterations = get_julia_points()
     generated_points = time.perf_counter()
 
-    plot_julia_points(points, point_iterations)
-    generated_plot = time.perf_counter()
+    generate_julia_image(point_iterations)
+    generated_image = time.perf_counter()
 
     # Summarize execution time:
     analysis_time = round(generated_points - start, 1)
-    plotting_time = round(generated_plot - generated_points, 1)
-    total_time = round(generated_plot - start, 1)
+    image_generation_time = round(generated_image - generated_points, 1)
+    total_time = round(generated_image - start, 1)
 
     print(f"num_steps: {args.num_steps}")
     print(f"max_iterations: {args.max_iterations}")
 
     print(f"\nSpent {analysis_time} seconds generating julia points.")
-    print(f"Spent {plotting_time} seconds generating plot.")
+    print(f"Spent {image_generation_time} seconds generating image.")
     print(f"Spent {total_time} seconds in total.")
