@@ -101,6 +101,10 @@ def generate_images():
     """Generate a sequence of images to make an animation."""
     plot_nums_c_vals = get_plot_nums_c_vals(1.5)
 
+    # Clear previously-generated animation output files.
+    os.system('rm -rf output/animation_files')
+    os.system('mkdir -p output/animation_files')
+
     # Generate one file for each value of c.
     for plot_num, c in plot_nums_c_vals.items():
         point_iterations = get_julia_points(c)
