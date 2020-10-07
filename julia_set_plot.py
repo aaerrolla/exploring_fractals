@@ -30,7 +30,23 @@ parser.add_argument('--num-processes',
     help="How many processes to use with --parallel?",
     action='store', type=int, default=2)
 
+parser.add_argument('--duration',
+    help="How long do you want the animation to be? (overrides --num-frames)",
+    action='store', type=int)
+
+parser.add_argument('--c-imag-initial',
+    help="What's the initial value for the imaginary component of c?",
+    action='store', type=float, default=-0.42193)
+
+parser.add_argument('--c-imag-increment',
+    help="How much do you want to vary the imaginary component of c?",
+    action='store', type=float, default=1.5)
+
 args = parser.parse_args()
+
+if args.duration:
+    # Override num_frames, and calculate num_frames to get requested duration.
+    args.num_frames = args.duration * args.framerate
 
 
 # Bounds and critical values
@@ -81,7 +97,7 @@ def generate_julia_image(args_list):
     print(f"Wrote file: {filename}")
 
 
-def get_plot_nums_c_vals(c_imag_increment):
+def get_plot_nums_c_vals():
     """Return a set of c values for a fractal animation.
     c values range from c(a, b) to c(a, b+c_imag_increment),
       where a and b are the initial components of c.
@@ -91,8 +107,8 @@ def get_plot_nums_c_vals(c_imag_increment):
       The keys will be used in the filename, to make sure image files are
       processed in the correct order for the animation.
     """
-    c_initial = complex(-0.62772, -0.42193)
-    c_imag_max = c_initial.imag + c_imag_increment
+    c_initial = complex(-0.62772, args.c_imag_initial)
+    c_imag_max = c_initial.imag + args.c_imag_increment
     c_dict = {}
     for plot_num, c_imag in enumerate(
             np.linspace(c_initial.imag, c_imag_max, args.num_frames)):
@@ -105,7 +121,7 @@ def get_plot_nums_c_vals(c_imag_increment):
 
 def generate_images():
     """Generate a sequence of images to make an animation."""
-    plot_nums_c_vals = get_plot_nums_c_vals(1.5)
+    plot_nums_c_vals = get_plot_nums_c_vals()
 
     # Clear previously-generated animation output files.
     os.system('rm -rf output/animation_files')
