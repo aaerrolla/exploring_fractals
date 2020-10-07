@@ -1,6 +1,6 @@
 """Generate an image of the julia set."""
 
-import time, argparse, os
+import time, argparse, os, multiprocessing
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -25,6 +25,10 @@ parser.add_argument('--num-frames',
 parser.add_argument('--framerate',
     help="What frame rate do you want for the animation?",
     action='store', type=int, default=5)
+
+parser.add_argument('--num-processes',
+    help="How many processes to use with --parallel?",
+    action='store', type=int, default=2)
 
 args = parser.parse_args()
 
@@ -63,8 +67,10 @@ def get_julia_points(c):
     return point_iterations
 
 
-def generate_julia_image(point_iterations, plot_num):
+def generate_julia_image(args_list):
     """Generate an image of the julia set."""
+    plot_num, c = args_list
+    point_iterations = get_julia_points(c)
     
     colors = plt.cm.viridis(point_iterations)*255
     colors = np.array(colors, dtype=np.uint8)
@@ -105,10 +111,10 @@ def generate_images():
     os.system('rm -rf output/animation_files')
     os.system('mkdir -p output/animation_files')
 
-    # Generate one file for each value of c.
-    for plot_num, c in plot_nums_c_vals.items():
-        point_iterations = get_julia_points(c)
-        generate_julia_image(point_iterations, plot_num)
+    # Generate image files in parallel.
+    args_list = [(plot_num, c) for plot_num, c in plot_nums_c_vals.items()]
+    pool = multiprocessing.Pool(processes=args.num_processes)
+    pool.map(generate_julia_image, args_list)
 
 
 def generate_animation():
