@@ -3,7 +3,7 @@ __pycache__/
 
 .DS_store
 
-f_env/
+ef_env/
 
 output/
 remote_output/
