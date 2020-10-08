@@ -1,0 +1,9 @@
+.DS_Store
+
+f_env/
+.git/
+
+.gitignore
+readme.md
+exclude.txt
+

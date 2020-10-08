@@ -6,3 +6,5 @@ __pycache__/
 f_env/
 
 output/
+remote_output/
+
