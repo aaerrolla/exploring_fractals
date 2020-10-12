@@ -1,7 +1,8 @@
 .DS_Store
 
-f_env/
+ef_env/
 .git/
+remote_output/
 
 .gitignore
 readme.md

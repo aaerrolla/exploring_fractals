@@ -27,7 +27,7 @@ parser.add_argument('--framerate',
     action='store', type=int, default=5)
 
 parser.add_argument('--num-processes',
-    help="How many processes to use with --parallel?",
+    help="How many processes should be used?",
     action='store', type=int, default=2)
 
 parser.add_argument('--duration',
@@ -99,7 +99,7 @@ def generate_julia_image(args_list):
 
 def get_plot_nums_c_vals():
     """Return a set of c values for a fractal animation.
-    c values range from c(a, b) to c(a, b+c_imag_increment),
+    c values range from complex(a, b) to complex(a, b+c_imag_increment),
       where a and b are the initial components of c.
 
     We want one c-value for every frame in the animation.
