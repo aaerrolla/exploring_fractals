@@ -1,7 +1,7 @@
 Exploring Fractals
 ===
 
-This is a companion repository to [this post]().
+This is a companion repository to [Exploring fractals on a cloud computer](https://ehmatthes.com/blog/cloud_fractal/).
 
 To run the code in this repository:
 
